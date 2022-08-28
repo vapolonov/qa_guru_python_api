@@ -3,3 +3,4 @@ pytest_voluptuous
 requests
 python-dotenv
 voluptuous
+Faker

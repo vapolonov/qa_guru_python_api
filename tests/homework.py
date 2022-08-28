@@ -1,24 +1,50 @@
 import requests
+from faker import Faker
 from pytest_voluptuous import S
-from voluptuous import Schema, Any, ALLOW_EXTRA
+
+from schemas.reqres import single_user
+
+faker = Faker()
 
 
 def test_list_users():
-    single_user = Schema(
-        {
-            'data': {
-                'id': int,
-                'email': str,
-                'first_name': str,
-                'last_name': str,
-                'avatar': str
-            },
-            'support': {
-                'url': str,
-                'text': str
-            }
-        })
-
     response = requests.get('https://reqres.in/api/users/2')
     assert response.status_code == 200
     assert S(single_user) == response.json()
+
+
+def test_create_user():
+    name = faker.first_name()
+    job = faker.job()
+    user_data = {'name': name, 'job': job}
+
+    response = requests.post('https://reqres.in/api/users', data=user_data)
+
+    assert response.status_code == 201
+    assert response.json()['name'] == name
+    assert response.json()['job'] == job
+
+
+def test_delete_user():
+    response = requests.delete('https://reqres.in/api/users/2')
+    assert response.status_code == 204
+
+
+def test_update_user():
+    name = faker.first_name()
+    job = faker.job()
+    user_data = {'name': name, 'job': job}
+
+    response = requests.put('https://reqres.in/api/users/2', json=user_data)
+    assert response.status_code == 200
+    assert response.json()['name'] == name
+    assert response.json()['job'] == job
+
+
+def test_login_unsuccessful():
+    email = faker.email()
+    user_data = {'email': email}
+
+    response = requests.post('https://reqres.in/api/login', data=user_data)
+    assert response.status_code == 400
+    assert response.json()['error'] == 'Missing password'
