@@ -8,6 +8,7 @@ def cats() -> BaseSession:
     cats_url = os.getenv('cats_api')
     return BaseSession(base_url=cats_url)
 
+
 def reqres() -> BaseSession:
     load_dotenv()
     reqres_url = os.getenv('reqres_api')

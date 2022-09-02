@@ -4,3 +4,5 @@ requests
 python-dotenv
 voluptuous
 Faker
+selene==2.0.0b6
+allure-pytest

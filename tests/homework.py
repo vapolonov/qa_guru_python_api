@@ -3,6 +3,7 @@ from faker import Faker
 from pytest_voluptuous import S
 
 from schemas.reqres import single_user
+from utils.sessions import reqres
 
 faker = Faker()
 
@@ -18,7 +19,7 @@ def test_create_user():
     job = faker.job()
     user_data = {'name': name, 'job': job}
 
-    response = requests.post('https://reqres.in/api/users', data=user_data)
+    response = reqres().post('/users', data=user_data)
 
     assert response.status_code == 201
     assert response.json()['name'] == name
@@ -46,5 +47,14 @@ def test_login_unsuccessful():
     user_data = {'email': email}
 
     response = requests.post('https://reqres.in/api/login', data=user_data)
+    assert response.status_code == 400
+    assert response.json()['error'] == 'Missing password'
+
+
+def test_register_unsuccessful():
+    email = faker.email()
+    user_data = {'email': email}
+
+    response = reqres().post('/register', data=user_data)
     assert response.status_code == 400
     assert response.json()['error'] == 'Missing password'
